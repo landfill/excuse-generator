@@ -29,7 +29,16 @@ export const generateExcuseAI = async (situation, mode, customInput) => {
       4. 상황에 딱 맞는 구체적인 내용을 포함하세요.
     `;
 
-        const result = await model.generateContent(prompt);
+        // Add a timeout of 8 seconds
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Request timed out")), 8000)
+        );
+
+        const result = await Promise.race([
+            model.generateContent(prompt),
+            timeoutPromise
+        ]);
+
         const response = await result.response;
         return response.text().trim();
     } catch (error) {

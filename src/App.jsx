@@ -33,16 +33,12 @@ function App() {
       const label = SITUATIONS.find(s => s.id === situation)?.label || situation;
       const text = await generateExcuseAI(situation === 'custom' ? customInput : label, mode, customInput);
       setResult(text);
+      setLoading(false);
     } catch (error) {
       console.log("AI Generation failed, falling back to templates:", error);
-      // Fallback to Static Templates
-      setTimeout(() => {
-        const text = generateExcuse(situation, mode, customInput);
-        setResult(text);
-        setLoading(false);
-      }, 800);
-      return;
-    } finally {
+      // Fallback to Static Templates immediately after timeout/error
+      const text = generateExcuse(situation, mode, customInput);
+      setResult(text);
       setLoading(false);
     }
   };
